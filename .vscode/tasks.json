@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "LXI Backend",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "server_v2.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "lxi-backend"
+      }
+    },
+    {
+      "label": "LXI Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "start"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend",
+        "env": {
+          "PORT": "3001"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "lxi-frontend"
+      }
+    }
+  ]
+}
