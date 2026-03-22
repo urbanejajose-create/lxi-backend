@@ -1,0 +1,11 @@
+backend/.env
+frontend/.env
+backend/venv/
+frontend/node_modules/
+frontend/build/
+backend/uploads/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.emergent/
+memory/

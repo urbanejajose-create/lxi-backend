@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500&family=Montserrat:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --lxi-primary-bg: #0a0e17;
+  --lxi-secondary-bg: #1a2332;
+  --lxi-primary-text: #f5f5f0;
+  --lxi-secondary-text: #8a8a8a;
+  --lxi-accent-gold: #d4af37;
+  --lxi-border: #2a3444;
+  --lxi-body-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --lxi-heading-font: 'Cormorant Garamond', serif;
+  --lxi-body-font-size: 16px;
+  --lxi-hero-title-size: clamp(3rem, 8vw, 5.5rem);
+  --lxi-section-title-size: clamp(2rem, 5vw, 3.5rem);
+  --radius: 0rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--lxi-body-font);
+  font-size: var(--lxi-body-font-size);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--lxi-primary-bg);
+  color: var(--lxi-primary-text);
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--lxi-heading-font);
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.cms-hero-title {
+  font-size: var(--lxi-hero-title-size);
+}
+
+.cms-section-title {
+  font-size: var(--lxi-section-title-size);
+}
+
+::selection {
+  background-color: var(--lxi-accent-gold);
+  color: var(--lxi-primary-bg);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--lxi-primary-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--lxi-border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--lxi-accent-gold);
+}
+
+@layer base {
+  :root {
+    --background: 222 40% 6%;
+    --foreground: 60 10% 95%;
+    --card: 218 32% 15%;
+    --card-foreground: 60 10% 95%;
+    --popover: 222 40% 6%;
+    --popover-foreground: 60 10% 95%;
+    --primary: 46 65% 52%;
+    --primary-foreground: 222 40% 6%;
+    --secondary: 218 32% 15%;
+    --secondary-foreground: 60 10% 95%;
+    --muted: 218 32% 15%;
+    --muted-foreground: 0 0% 54%;
+    --accent: 46 65% 52%;
+    --accent-foreground: 222 40% 6%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 10% 95%;
+    --border: 217 24% 22%;
+    --input: 217 24% 22%;
+    --ring: 46 65% 52%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slowZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes scrollIndicator {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(8px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slow-zoom {
+  animation: slowZoom 20s ease-in-out infinite alternate;
+}
+
+.animate-scroll-indicator {
+  animation: scrollIndicator 2s ease-in-out infinite;
+}
+
+/* Staggered animation delays */
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+
+/* Gold underline animation for nav links */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--lxi-accent-gold);
+  transition: width 0.3s ease-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Product card hover effect */
+.product-card {
+  transition: border-color 0.5s ease-out;
+}
+
+.product-card:hover {
+  border-color: var(--lxi-accent-gold);
+}
+
+.product-card .product-overlay {
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+
+.product-card:hover .product-overlay {
+  opacity: 1;
+}
+
+/* Button transitions */
+.btn-gold-outline {
+  border: 1px solid var(--lxi-accent-gold);
+  color: var(--lxi-accent-gold);
+  background: transparent;
+  transition: background-color 0.3s ease-out, color 0.3s ease-out;
+}
+
+.btn-gold-outline:hover {
+  background-color: var(--lxi-accent-gold);
+  color: var(--lxi-primary-bg);
+}
+
+.btn-gold-fill {
+  background-color: var(--lxi-accent-gold);
+  color: var(--lxi-primary-bg);
+  transition: background-color 0.3s ease-out;
+}
+
+.btn-gold-fill:hover {
+  background-color: #b5952f;
+}
+
+/* Input focus states */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--lxi-accent-gold) !important;
+}
+
+/* Accordion smooth transitions */
+.accordion-content {
+  transition: height 0.3s ease-out;
+}
+
+/* Mobile menu overlay */
+.mobile-menu-overlay {
+  backdrop-filter: blur(8px);
+}
+
+/* Image overlay gradient */
+.hero-overlay {
+  background: linear-gradient(to bottom, transparent 0%, rgba(10, 14, 23, 0.6) 100%);
+}
+
+/* Letter spacing utilities */
+.tracking-widest-custom {
+  letter-spacing: 0.2em;
+}
+
+.tracking-extreme {
+  letter-spacing: 0.3em;
+}
+
+/* Debug wrapper fix */
+@layer base {
+  [data-debug-wrapper="true"] {
+    display: contents !important;
+  }
+}
