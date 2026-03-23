@@ -12,6 +12,19 @@ import { productService, wishlistService } from '../services/api';
 import ReviewForm from '../components/ReviewForm';
 import ReviewsList from '../components/ReviewsList';
 
+const REQUEST_TIMEOUT_MS = 8000;
+
+function withTimeout(promise, timeoutMs = REQUEST_TIMEOUT_MS) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      window.setTimeout(() => {
+        reject(new Error('Request timed out'));
+      }, timeoutMs);
+    }),
+  ]);
+}
+
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -32,19 +45,35 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        let response;
+        setError('');
+        setSelectedImage(0);
+        const productKey = decodeURIComponent(slug || '').trim();
+        let prod = null;
 
         try {
-          response = await productService.getBySlug(slug);
-        } catch (err) {
-          response = await productService.getById(slug);
+          const response = await withTimeout(productService.getBySlug(productKey));
+          prod = response.data.product;
+        } catch (slugError) {
+          try {
+            const response = await withTimeout(productService.getById(productKey));
+            prod = response.data.product;
+          } catch (idError) {
+            const listResponse = await withTimeout(productService.getAll());
+            const products = listResponse.data.products || [];
+            prod = products.find((item) => item.slug === productKey || item._id === productKey) || null;
+          }
         }
 
-        const prod = response.data.product;
+        if (!prod) {
+          throw new Error('Product not found');
+        }
+
         setProduct(prod);
         
         if (prod.sizes && prod.sizes.length === 1) {
           setSelectedSize(prod.sizes[0]);
+        } else {
+          setSelectedSize('');
         }
       } catch (err) {
         setError('Product not found');

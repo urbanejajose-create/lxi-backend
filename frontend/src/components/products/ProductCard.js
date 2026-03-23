@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
     ? product.images
     : (product.image_url ? [product.image_url] : []);
   const hasSecondImage = productImages.length > 1;
-  const productSlug = product.slug || product._id;
+  const productSlug = encodeURIComponent(product.slug || product._id);
 
   const handleWishlistClick = async (e) => {
     e.preventDefault();

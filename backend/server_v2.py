@@ -67,6 +67,25 @@ app = FastAPI(
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    payload = await request.body()
+
+    try:
+        event = json.loads(payload)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    print("EVENTO:", event.get("type"))
+
+    if event.get("type") in [
+        "checkout.session.completed",
+        "payment_intent.succeeded"
+    ]:
+        print("🔥 PAGO CONFIRMADO")
+
+    return {"status": "success"}
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -2172,6 +2191,16 @@ async def ensure_critical_indexes():
 async def shutdown_db_client():
     client.close()
 
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    payload = await request.body()
+
+    print("🔥 WEBHOOK RECIBIDO")
+    print(payload)
+
+    return {"status": "ok"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+

@@ -102,7 +102,40 @@ const emptyProductForm = {
   featured: false,
 };
 
+function normalizeProductImages(imageUrl, imagesText) {
+  const primaryImage = imageUrl.trim();
+  const galleryImages = imagesText
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const images = primaryImage ? [primaryImage] : [];
+  galleryImages.forEach((image) => {
+    if (!images.includes(image)) {
+      images.push(image);
+    }
+  });
+
+  return {
+    primaryImage,
+    images,
+  };
+}
+
+function slugifyProduct(value) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function mapProductToForm(product) {
+  const { primaryImage, images } = normalizeProductImages(
+    product.image_url || product.images?.[0] || '',
+    (product.images || []).join('\n'),
+  );
+
   return {
     name: product.name || '',
     slug: product.slug || '',
@@ -112,8 +145,8 @@ function mapProductToForm(product) {
     sizesText: (product.sizes || []).join(', '),
     inventory: String(product.inventory ?? 0),
     sku: product.sku || '',
-    image_url: product.image_url || product.images?.[0] || '',
-    imagesText: (product.images || []).join('\n'),
+    image_url: primaryImage,
+    imagesText: images.join('\n'),
     details_material: product.details?.material || '',
     details_embroidery: product.details?.embroidery || '',
     details_sizing: product.details?.sizing || '',
@@ -124,18 +157,19 @@ function mapProductToForm(product) {
 }
 
 function buildProductPayload(form) {
-  const images = form.imagesText.split('\n').map((item) => item.trim()).filter(Boolean);
+  const { primaryImage, images } = normalizeProductImages(form.image_url, form.imagesText);
+  const normalizedSlug = slugifyProduct(form.slug || form.name || '');
   return {
     name: form.name.trim(),
-    slug: form.slug.trim() || undefined,
+    slug: normalizedSlug || undefined,
     category: form.category.trim().toUpperCase(),
     description: form.description.trim(),
     price: Number(form.price || 0),
     sizes: form.sizesText.split(',').map((item) => item.trim()).filter(Boolean),
     inventory: Number(form.inventory || 0),
     sku: form.sku.trim(),
-    image_url: form.image_url.trim(),
-    images: images.length > 0 ? images : (form.image_url.trim() ? [form.image_url.trim()] : []),
+    image_url: primaryImage,
+    images,
     details: {
       material: form.details_material.trim(),
       embroidery: form.details_embroidery.trim(),
@@ -301,6 +335,10 @@ function buildPhilosophyPayload(form) {
   };
 }
 
+function getRequestErrorMessage(error) {
+  return error?.response?.data?.detail || error?.message || 'Unknown error';
+}
+
 export default function AdminDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -315,6 +353,7 @@ export default function AdminDashboard() {
   const [philosophyForm, setPhilosophyForm] = useState(defaultPhilosophyForm);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [loadWarning, setLoadWarning] = useState('');
   const [syncLoading, setSyncLoading] = useState(false);
   const [syncMessage, setSyncMessage] = useState('');
   const [importLoading, setImportLoading] = useState(false);
@@ -330,43 +369,95 @@ export default function AdminDashboard() {
   const [uploadingField, setUploadingField] = useState('');
 
   useEffect(() => {
-    if (user && !user.is_admin) {
-      navigate('/');
-      return;
-    }
     if (user?.is_admin) {
       loadAdminData();
     }
-  }, [user, navigate]);
+  }, [user]);
 
   const loadAdminData = async () => {
     try {
       setLoading(true);
-      const [statsResponse, homeResponse, globalResponse, philosophyResponse, productsResponse] = await Promise.all([
+      setError('');
+      setLoadWarning('');
+      const [
+        statsResult,
+        homeResult,
+        globalResult,
+        philosophyResult,
+        productsResult,
+        integrationResult,
+      ] = await Promise.allSettled([
         adminService.getStats(),
         adminService.getHomeContent(),
         adminService.getGlobalContent(),
         adminService.getPhilosophyContent(),
         productService.getAllAdmin(),
+        adminService.getIntegrationStatus(),
       ]);
-      const integrationResponse = await adminService.getIntegrationStatus();
-      const loadedProducts = productsResponse.data.products || [];
-      setStats(statsResponse.data);
-      setIntegrationStatus(integrationResponse.data);
-      setHomeForm({
-        ...defaultHomeForm,
-        ...(homeResponse.data.content || {}),
-        pillars: (homeResponse.data.content?.pillars || defaultHomeForm.pillars).slice(0, 3),
-      });
-      setGlobalForm(mapGlobalToForm(globalResponse.data.content || {}));
-      setPhilosophyForm(mapPhilosophyToForm(philosophyResponse.data.content || {}));
-      setProducts(loadedProducts);
-      if (loadedProducts[0]) {
-        setSelectedProductId(loadedProducts[0]._id);
-        setProductForm(mapProductToForm(loadedProducts[0]));
+
+      const failures = [];
+
+      if (statsResult.status === 'fulfilled') {
+        setStats(statsResult.value.data);
+      } else {
+        setStats(null);
+        failures.push(`estadisticas (${getRequestErrorMessage(statsResult.reason)})`);
       }
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to load admin data');
+
+      if (homeResult.status === 'fulfilled') {
+        setHomeForm({
+          ...defaultHomeForm,
+          ...(homeResult.value.data.content || {}),
+          pillars: (homeResult.value.data.content?.pillars || defaultHomeForm.pillars).slice(0, 3),
+        });
+      } else {
+        setHomeForm(defaultHomeForm);
+        failures.push(`home (${getRequestErrorMessage(homeResult.reason)})`);
+      }
+
+      if (globalResult.status === 'fulfilled') {
+        setGlobalForm(mapGlobalToForm(globalResult.value.data.content || {}));
+      } else {
+        setGlobalForm(defaultGlobalForm);
+        failures.push(`global (${getRequestErrorMessage(globalResult.reason)})`);
+      }
+
+      if (philosophyResult.status === 'fulfilled') {
+        setPhilosophyForm(mapPhilosophyToForm(philosophyResult.value.data.content || {}));
+      } else {
+        setPhilosophyForm(defaultPhilosophyForm);
+        failures.push(`philosophy (${getRequestErrorMessage(philosophyResult.reason)})`);
+      }
+
+      if (productsResult.status === 'fulfilled') {
+        const loadedProducts = productsResult.value.data.products || [];
+        setProducts(loadedProducts);
+        if (loadedProducts[0]) {
+          setSelectedProductId(loadedProducts[0]._id);
+          setProductForm(mapProductToForm(loadedProducts[0]));
+        } else {
+          setSelectedProductId(null);
+          setProductForm(emptyProductForm);
+        }
+      } else {
+        setProducts([]);
+        setSelectedProductId(null);
+        setProductForm(emptyProductForm);
+        failures.push(`productos (${getRequestErrorMessage(productsResult.reason)})`);
+      }
+
+      if (integrationResult.status === 'fulfilled') {
+        setIntegrationStatus(integrationResult.value.data);
+      } else {
+        setIntegrationStatus(null);
+        failures.push(`integraciones (${getRequestErrorMessage(integrationResult.reason)})`);
+      }
+
+      if (failures.length === 6) {
+        setError(`No se pudo cargar el panel admin. ${failures.join(' | ')}`);
+      } else if (failures.length > 0) {
+        setLoadWarning(`Algunas secciones no cargaron: ${failures.join(' | ')}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -391,7 +482,16 @@ export default function AdminDashboard() {
 
   const handleProductChange = (event) => {
     const { name, value, type, checked } = event.target;
-    setProductForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setProductForm((prev) => {
+      const next = { ...prev, [name]: type === 'checkbox' ? checked : value };
+
+      if (name === 'image_url' && type !== 'checkbox') {
+        const { images } = normalizeProductImages(value, prev.imagesText);
+        next.imagesText = images.join('\n');
+      }
+
+      return next;
+    });
   };
 
   const handleHomeChange = (event) => {
@@ -437,10 +537,8 @@ export default function AdminDashboard() {
         setProductForm((prev) => {
           const next = { ...prev, [target]: uploadedUrl };
           if (target === 'image_url') {
-            const lines = prev.imagesText.split('\n').map((item) => item.trim()).filter(Boolean);
-            if (!lines.includes(uploadedUrl)) {
-              next.imagesText = [uploadedUrl, ...lines].join('\n');
-            }
+            const { images } = normalizeProductImages(uploadedUrl, prev.imagesText);
+            next.imagesText = images.join('\n');
           }
           return next;
         });
@@ -600,6 +698,27 @@ export default function AdminDashboard() {
     );
   }
 
+  if (user && !user.is_admin) {
+    return (
+      <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center px-6">
+        <div className="max-w-lg w-full border border-red-500/40 bg-red-500/10 p-8 text-center">
+          <h1 className="text-[#f5f5f0] text-2xl font-semibold">Acceso denegado</h1>
+          <p className="text-[#b0b0b0] mt-4 leading-relaxed">
+            Tu cuenta no tiene permisos de administrador en la base de datos actual.
+            Si antes podias entrar, revisa que hayas iniciado sesion con el usuario correcto
+            o vuelve a marcar ese usuario con <span className="text-[#d4af37] font-mono">is_admin = true</span>.
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-6 bg-[#d4af37] text-[#0a0e17] px-6 py-3 font-semibold hover:bg-[#e0c158]"
+          >
+            Volver al sitio
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center">
@@ -613,6 +732,11 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#0a0e17] pt-32 pb-24">
       <div className="max-w-7xl mx-auto px-6">
+        {loadWarning && (
+          <Alert className="mb-6 border-amber-500/40 bg-amber-500/10">
+            <AlertDescription className="text-amber-200">{loadWarning}</AlertDescription>
+          </Alert>
+        )}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-[#f5f5f0]">Admin CMS</h1>
