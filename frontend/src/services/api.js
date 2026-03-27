@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const IMAGE_BASE_URL = 'http://localhost:8001';
+
+export const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return `${IMAGE_BASE_URL}${path}`;
+};
 
 // Create axios instance
 const api = axios.create({

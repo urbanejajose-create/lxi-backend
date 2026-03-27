@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet.jsx';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
+import { getImageUrl } from '../../services/api';
 
 const CartDrawer = () => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const CartDrawer = () => {
                 data-testid="continue-shopping-btn"
                 className="mt-6 btn-gold-outline px-8 py-3 text-[11px] tracking-[0.2em]"
               >
-                EXPLORE DROP 01
+                EXPLORE INITIUM
               </button>
             </div>
           ) : (
@@ -101,7 +102,7 @@ const CartDrawer = () => {
                   >
                     <div className="w-20 h-20 bg-[#0a0e17] flex-shrink-0 overflow-hidden">
                       <img
-                        src={item.image}
+                        src={getImageUrl(item.image)}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

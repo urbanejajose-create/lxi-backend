@@ -1,4 +1,4 @@
-// LXI Product Data - Drop 01 Founders Edition
+// LXI Product Data - INITIUM Founders Edition
 
 export const products = [
   {

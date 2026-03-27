@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSiteContent } from '../context/SiteContentContext';
-import { productService, wishlistService } from '../services/api';
+import { getImageUrl, productService, wishlistService } from '../services/api';
 import ReviewForm from '../components/ReviewForm';
 import ReviewsList from '../components/ReviewsList';
 
@@ -90,6 +90,7 @@ const ProductDetail = () => {
   const productImages = (product?.images && product.images.length > 0)
     ? product.images
     : (product?.image_url ? [product.image_url] : []);
+  const productImageUrls = productImages.map(getImageUrl);
 
   const handleAddToCart = () => {
     try {
@@ -110,7 +111,7 @@ const ProductDetail = () => {
         name: product.name,
         price: product.price,
         size: selectedSize,
-        image: productImages[0],
+        image: productImageUrls[0],
         quantity: 1,
       });
 
@@ -195,7 +196,7 @@ const ProductDetail = () => {
             {/* Main Image */}
             <div className="aspect-square bg-[#1a2332] overflow-hidden mb-4">
               <img
-                src={productImages[selectedImage] || '/placeholder.jpg'}
+                src={productImageUrls[selectedImage] || getImageUrl('/placeholder.jpg')}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -216,7 +217,7 @@ const ProductDetail = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={getImageUrl(image)}
                       alt={`${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -361,7 +362,7 @@ const ProductDetail = () => {
             {/* Brand Micro Block */}
             <div className="mt-8 flex items-center gap-3 text-[#8a8a8a] text-xs">
               <span className="text-[#d4af37] font-serif text-lg">I</span>
-              <span>Part of Drop 01 — Founders Edition MMXXVI</span>
+              <span>Part of INITIUM — Founders Edition MMXXVI</span>
             </div>
           </div>
         </div>

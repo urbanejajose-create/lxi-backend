@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 import ProductCard from '../components/products/ProductCard';
-import { productService, siteContentService } from '../services/api';
+import { getImageUrl, productService, siteContentService } from '../services/api';
 import { products as fallbackProducts } from '../data/products';
 
 const fallbackContent = {
-  hero_label: 'FOUNDERS EDITION - DROP 01',
+  hero_label: 'FOUNDERS EDITION -  INITIUM',
   hero_title: 'LA ARMADURA DEL GLADIADOR MODERNO',
   hero_subtitle: 'Para quienes eligieron enfrentar su arena.',
-  hero_cta_text: 'ENTER DROP 01',
+  hero_cta_text: 'ENTER INITIUM',
   hero_cta_link: '/shop',
   hero_image: 'https://images.unsplash.com/photo-1648314789571-4003c96b5b09?w=1920&q=80',
   brand_quote: 'No vendemos ropa. Vendemos la armadura que te recuerda quien decidiste ser.',
@@ -18,7 +18,7 @@ const fallbackContent = {
     { numeral: 'II', title: 'PRESENCIA', description: 'La autoridad que no necesita anunciarse.' },
     { numeral: 'III', title: 'LEGADO', description: 'Lo que permanece cuando el miedo desaparece.' },
   ],
-  collection_label: 'DROP 01 - FOUNDERS EDITION',
+  collection_label: 'INITIUM - FOUNDERS EDITION',
   collection_title: 'La Coleccion',
   story_label: 'NACIO DE UNA BATALLA',
   story_title: 'Cada pieza LXI es un recordatorio de que la batalla mas dificil ya comenzo.',
@@ -225,7 +225,7 @@ const Home = () => {
             <div className="lg:col-span-3 reveal-section opacity-0">
               <div className="aspect-[4/3] overflow-hidden">
                 <img
-                  src={content.story_image}
+                  src={getImageUrl(content.story_image)}
                   alt="LXI Philosophy"
                   className="w-full h-full object-cover"
                 />

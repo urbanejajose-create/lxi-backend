@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+
 import { Heart } from 'lucide-react';
-import { wishlistService } from '../../services/api';
+import { getImageUrl, wishlistService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
 
@@ -14,6 +16,7 @@ const ProductCard = ({ product }) => {
   const productImages = (product.images && product.images.length > 0)
     ? product.images
     : (product.image_url ? [product.image_url] : []);
+  const productImageUrls = productImages.map(getImageUrl);
   const hasSecondImage = productImages.length > 1;
   const productSlug = encodeURIComponent(product.slug || product._id);
 
@@ -53,7 +56,7 @@ const ProductCard = ({ product }) => {
       <div className="relative aspect-square overflow-hidden">
         {/* Primary Image */}
         <img
-          src={productImages[0] || '/placeholder.jpg'}
+          src={productImageUrls[0] || getImageUrl('/placeholder.jpg')}
           alt={product.name}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
             isHovered && hasSecondImage ? 'opacity-0' : 'opacity-100'
@@ -63,7 +66,7 @@ const ProductCard = ({ product }) => {
         {/* Secondary Image (on hover) */}
         {hasSecondImage && (
           <img
-            src={productImages[1]}
+            src={productImageUrls[1]}
             alt={`${product.name} alternate`}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
               isHovered ? 'opacity-100' : 'opacity-0'

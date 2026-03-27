@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { wishlistService, productService } from '../services/api';
+import { getImageUrl, wishlistService, productService } from '../services/api';
 import { Button } from '../components/ui/button';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Heart } from 'lucide-react';
@@ -78,7 +78,7 @@ export default function WishlistPage() {
                   <div className="aspect-square bg-[#0a0e17] flex items-center justify-center">
                     {product?.image_url && (
                       <img
-                        src={product.image_url}
+                        src={getImageUrl(product.image_url)}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

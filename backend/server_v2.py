@@ -95,10 +95,10 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_HOME_CONTENT = {
     "_id": "home",
-    "hero_label": "FOUNDERS EDITION - DROP 01",
+    "hero_label": "FOUNDERS EDITION - INITIUM",
     "hero_title": "LA ARMADURA DEL GLADIADOR MODERNO",
     "hero_subtitle": "Para quienes eligieron enfrentar su arena.",
-    "hero_cta_text": "ENTER DROP 01",
+    "hero_cta_text": "ENTER INITIUM",
     "hero_cta_link": "/shop",
     "hero_image": "https://images.unsplash.com/photo-1648314789571-4003c96b5b09?w=1920&q=80",
     "brand_quote": "No vendemos ropa. Vendemos la armadura que te recuerda quien decidiste ser.",
@@ -119,7 +119,7 @@ DEFAULT_HOME_CONTENT = {
             "description": "Lo que permanece cuando el miedo desaparece."
         }
     ],
-    "collection_label": "DROP 01 - FOUNDERS EDITION",
+    "collection_label": "INITIUM - FOUNDERS EDITION",
     "collection_title": "La Coleccion",
     "story_label": "NACIO DE UNA BATALLA",
     "story_title": "Cada pieza LXI es un recordatorio de que la batalla mas dificil ya comenzo.",
@@ -138,7 +138,7 @@ DEFAULT_GLOBAL_CONTENT = {
     "navbar_links": [
         {"label": "SHOP", "path": "/shop"},
         {"label": "PHILOSOPHY", "path": "/philosophy"},
-        {"label": "DROP 01", "path": "/shop"},
+        {"label": "INITIUM", "path": "/shop"},
     ],
     "mobile_menu_badge": "FOUNDERS EDITION",
     "footer_description": "Vestir la transformacion de quienes eligieron enfrentar su arena.",
@@ -146,7 +146,7 @@ DEFAULT_GLOBAL_CONTENT = {
     "instagram_url": "https://instagram.com",
     "tiktok_url": "https://tiktok.com",
     "footer_shop_links": [
-        {"label": "DROP 01", "path": "/shop", "external": False},
+        {"label": "INITIUM", "path": "/shop", "external": False},
         {"label": "TOPS", "path": "/shop?category=TOPS", "external": False},
         {"label": "HEADWEAR", "path": "/shop?category=HEADWEAR", "external": False},
         {"label": "OUTERWEAR", "path": "/shop?category=OUTERWEAR", "external": False},
@@ -159,14 +159,14 @@ DEFAULT_GLOBAL_CONTENT = {
     "newsletter_text": "Be the first to know about new drops and LXI philosophy.",
     "footer_bottom_text": "All rights reserved.",
     "footer_badge_text": "FOUNDERS EDITION MMXXVI",
-    "shop_title": "DROP 01",
+    "shop_title": "INITIUM",
     "shop_count_label_template": "FOUNDERS EDITION - {count} PIECES",
     "shop_empty_text": "No products found",
     "shop_banner_label": "FOUNDERS EDITION - AVAILABLE FOR LIMITED TIME",
     "shop_banner_text": "PRODUCED ON DEMAND - SHIPS VIA PRINTFUL",
     "product_badge_text": "FOUNDERS EDITION",
     "product_breadcrumb_shop": "SHOP",
-    "product_breadcrumb_collection": "DROP 01",
+    "product_breadcrumb_collection": "INITIUM",
     "add_to_cart_text": "ADD TO ARMOR",
     "add_to_cart_loading_text": "ADDING...",
     "theme": {
@@ -971,16 +971,16 @@ async def get_products(
 ):
     """Get products with optional filtering and search"""
     query = {"visible": {"$ne": False}}
-    
+
     if category:
         query["category"] = category.upper()
     
     if search:
         query["$text"] = {"$search": search}
     
-    products = await db.products.find(query).skip(skip).limit(limit).to_list(limit)
+    products = await db.products.find(query).skip(skip).limit(limit).to_list(None)
     total = await db.products.count_documents(query)
-    
+
     return {
         "products": products,
         "count": len(products),
