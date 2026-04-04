@@ -1,0 +1,107 @@
+.lxi-footer {
+  background: #050507;
+  color: #e6e0d7;
+  padding: 140px 24px 84px;
+  letter-spacing: 0.02em;
+}
+
+.lxi-footer__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: 64px;
+}
+
+.lxi-footer__brand {
+  display: grid;
+  gap: 26px;
+}
+
+.lxi-footer__wordmark {
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(52px, 8vw, 124px);
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  color: rgba(232, 224, 213, 0.95);
+}
+
+.lxi-footer__manifesto {
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(15px, 2.7vw, 21px);
+  font-weight: 300;
+  line-height: 2.05;
+  color: rgba(232, 224, 213, 0.68);
+  max-width: 560px;
+}
+
+.lxi-footer__nav {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+}
+
+.lxi-footer__social {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 8.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.lxi-footer__social-links {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.lxi-footer__link {
+  color: rgba(232, 224, 213, 0.62);
+  text-decoration: none;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 300;
+  transition: color 0.6s ease;
+}
+
+.lxi-footer__link:hover {
+  color: rgba(184, 147, 90, 0.78);
+}
+
+.lxi-footer__legal {
+  margin-top: 16px;
+  font-size: 8.5px;
+  color: rgba(232, 224, 213, 0.38);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.lxi-footer__closing {
+  margin-top: 12px;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(232, 224, 213, 0.32);
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 300;
+}
+
+@media (min-width: 900px) {
+  .lxi-footer__inner {
+    grid-template-columns: 1.2fr 0.8fr 0.8fr;
+    align-items: end;
+  }
+
+  .lxi-footer__legal {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .lxi-footer__closing {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
