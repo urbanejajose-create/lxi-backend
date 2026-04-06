@@ -69,7 +69,7 @@ const ProductDetail = () => {
         }
 
         setProduct(prod);
-        
+
         if (prod.sizes && prod.sizes.length === 1) {
           setSelectedSize(prod.sizes[0]);
         } else {
@@ -105,7 +105,7 @@ const ProductDetail = () => {
       }
 
       setIsAdding(true);
-      
+
       addItem({
         id: productId,
         name: product.name,
@@ -210,11 +210,10 @@ const ProductDetail = () => {
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     data-testid={`thumbnail-${index}`}
-                    className={`w-20 h-20 overflow-hidden border transition-colors duration-300 ${
-                      selectedImage === index
+                    className={`w-20 h-20 overflow-hidden border transition-colors duration-300 ${selectedImage === index
                         ? 'border-[#d4af37]'
                         : 'border-[#2a3444] hover:border-[#8a8a8a]'
-                    }`}
+                      }`}
                   >
                     <img
                       src={getImageUrl(image)}
@@ -263,11 +262,10 @@ const ProductDetail = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 border transition-all ${
-                        selectedSize === size
+                      className={`px-4 py-2 border transition-all ${selectedSize === size
                           ? 'border-[#d4af37] text-[#d4af37]'
                           : 'border-[#2a3444] text-[#8a8a8a] hover:text-[#f5f5f0]'
-                      }`}
+                        }`}
                     >
                       {size}
                     </button>
@@ -370,13 +368,13 @@ const ProductDetail = () => {
         {/* Reviews Section */}
         <div className="mt-24 max-w-4xl">
           <h2 className="text-2xl font-light text-[#f5f5f0] mb-8">CUSTOMER REVIEWS</h2>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Review Form - Left */}
             <div className="lg:col-span-1">
               {isAuthenticated ? (
-                <ReviewForm 
-                  productId={productId} 
+                <ReviewForm
+                  productId={productId}
                   onReviewAdded={() => setReviewRefresh(prev => prev + 1)}
                 />
               ) : (
@@ -394,7 +392,7 @@ const ProductDetail = () => {
 
             {/* Reviews List - Right */}
             <div className="lg:col-span-2">
-              <ReviewsList 
+              <ReviewsList
                 productId={productId}
                 refreshTrigger={reviewRefresh}
               />
