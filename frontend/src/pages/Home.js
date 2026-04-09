@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 import ProductCard from '../components/products/ProductCard';
 import { getImageUrl, productService, siteContentService } from '../services/api';
-import { products as fallbackProducts } from '../data/products';
 
 const fallbackContent = {
   hero_label: 'FOUNDERS EDITION -  INITIUM',
@@ -32,7 +31,8 @@ const fallbackContent = {
 
 const Home = () => {
   const heroRef = useRef(null);
-  const [featuredProducts, setFeaturedProducts] = useState(fallbackProducts.slice(0, 3));
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [content, setContent] = useState(fallbackContent);
 
   useEffect(() => {
@@ -63,8 +63,9 @@ const Home = () => {
         const featured = products.filter((product) => product.featured);
         setFeaturedProducts((featured.length > 0 ? featured : products).slice(0, 3));
       } catch (error) {
-        // Use fallback products if API fails
         console.warn('Failed to load featured products from API');
+      } finally {
+        setProductsLoading(false);
       }
     };
 
@@ -103,7 +104,7 @@ const Home = () => {
         <div
           className="hero-bg animate-slow-zoom"
           style={{
-            backgroundImage: `url('${content.hero_image}')`,
+            backgroundImage: `url('${getImageUrl(content.hero_image)}')`,
           }}
         />
 
@@ -195,11 +196,13 @@ const Home = () => {
             </h2>
           </div>
 
-          <div className="product-grid">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
-          </div>
+          {!productsLoading && (
+            <div className="product-grid">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product._id || product.id} product={product} />
+              ))}
+            </div>
+          )}
 
           <div className="reveal-section opacity-0 mt-12 text-center">
             <Link

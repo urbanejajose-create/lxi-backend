@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { siteContentService } from '../services/api';
+import { getImageUrl, siteContentService } from '../services/api';
 
 const fallbackContent = {
   hero_label: 'LA FILOSOFIA LXI',
@@ -93,7 +93,7 @@ const Philosophy = () => {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('${content.hero_image}')`,
+            backgroundImage: `url('${getImageUrl(content.hero_image)}')`,
           }}
         />
         <div className="absolute inset-0 bg-[#0a0e17]/70" />

@@ -34,7 +34,7 @@ db = client[os.environ['DB_NAME']]
 
 # Stripe setup (using stripe library directly)
 import stripe
-stripe_api_key = os.environ.get('STRIPE_API_KEY', 'sk_test_emergent')
+stripe_api_key = os.environ.get('STRIPE_API_KEY', '')
 stripe.api_key = stripe_api_key
 paypal_client_id = os.environ.get('PAYPAL_CLIENT_ID', '')
 paypal_client_secret = os.environ.get('PAYPAL_CLIENT_SECRET', '')
@@ -50,7 +50,9 @@ printful_webhook_secret_hex = os.environ.get('PRINTFUL_WEBHOOK_SECRET_HEX', '')
 # Security
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
-SECRET_KEY = os.environ.get('SECRET_KEY', 'lxi-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY environment variable is required and not set")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
@@ -2156,16 +2158,16 @@ async def health_check():
 # APP SETUP
 # =============================================================================
 
-app.include_router(api_router)
-app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get('CORS_ORIGINS', 'http://localhost:3000').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(api_router)
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
 @app.exception_handler(RateLimitExceeded)
 async def rate_limit_handler(request, exc):

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-const IMAGE_BASE_URL = 'http://localhost:8001';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const IMAGE_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 
 export const getImageUrl = (path) => {
   if (!path) return '';
