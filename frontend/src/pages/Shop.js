@@ -130,6 +130,7 @@ const Shop = () => {
               value={priceRange[0]}
               onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
               className="flex-1"
+              style={{ accentColor: '#C9A961' }}
             />
             <input
               type="range"
@@ -138,6 +139,7 @@ const Shop = () => {
               value={priceRange[1]}
               onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
               className="flex-1"
+              style={{ accentColor: '#C9A961' }}
             />
           </div>
         </div>

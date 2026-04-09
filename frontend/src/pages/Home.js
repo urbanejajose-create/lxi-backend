@@ -167,7 +167,7 @@ const Home = () => {
             {content.pillars.map((pillar, index) => (
               <div
                 key={pillar.numeral}
-                className={`reveal-section opacity-0 brand-pillar animation-delay-${(index + 1) * 100}`}
+                className={`reveal-section opacity-0 brand-pillar delay-${(index + 1) * 100}`}
               >
                 <span className="text-[#d4af37] font-serif text-3xl">{pillar.numeral}</span>
                 <h3 className="text-[#f5f5f0] text-lg tracking-[0.2em] mt-4 mb-3 font-sans font-medium">

@@ -142,7 +142,7 @@ const Philosophy = () => {
             {content.values.map((value, index) => (
               <div
                 key={value.numeral}
-                className={`reveal-section opacity-0 flex gap-8 items-start border-l border-[#2a3444] pl-8 animation-delay-${index * 100}`}
+                className={`reveal-section opacity-0 flex gap-8 items-start border-l border-[#2a3444] pl-8 delay-${index * 100}`}
               >
                 <span className="text-[#d4af37] font-serif text-4xl flex-shrink-0 w-12">
                   {value.numeral}
